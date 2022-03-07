@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>RPG pre Alpha test</title>
+
+    <style type="text/css">
+      #canvas {
+        border: 1px solid black;
+      }
+    </style>
+
+  </head>
+  <body align="center">
+    <div id="debug"></div>
+    <button id="showmap">Show the entire map</button>
+    <br>
+    <canvas id="canvas" width="500" height="500">
+    Use arrow keys to move
+
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+    </script>
+    <script src="Classes/Map.js"></script>
+    <script src="map/1.map.js"></script>
+    <script src="Classes/Player.js"></script>
+    <script>
+    var showAll=false;
+    document.getElementById("showmap").addEventListener("click",()=>{
+      if(showAll)showAll=false;
+      else showAll=true;
+    })
+
+    const buttons={
+      left: false,
+      up: false,
+      right: false,
+      down: false
+    }
+
+    document.addEventListener('keydown', function(event) {
+      switch (event.keyCode) {
+        case 37: //Left Arrow
+        buttons.left = true;
+        break;
+        case 39: //Right Arrow
+        buttons.right = true;
+        break;
+        case 38: //Up Arrow
+        buttons.up = true;
+        break;
+        case 40: //Down Arrow
+        buttons.down = true;
+        break;
+      }
+    });
+
+    var player;
+    var map;
+    function init(){
+      player = new Player();
+      map = new Map(map1)
+      map.load(0,0,true)
+    }
+    init();
+
+    function run()
+    {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      player.control(buttons);
+      player.update();
+      map.load(player.x,player.y,showAll);
+
+      debug();
+      window.requestAnimationFrame(run);
+    }
+    run();
+
+    function debug(){
+      document.getElementById("debug").innerHTML=`
+      x: ${player.x}, y: ${player.y}
+      `
+    }
+    </script>
+
+  </body>
+</html>
