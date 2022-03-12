@@ -16,7 +16,7 @@
     <div id="debug"></div>
     <button id="showmap">Show the entire map</button>
     <br>
-    <canvas id="canvas" width="500" height="500">
+    <canvas id="canvas" width="400" height="400">
     Use arrow keys to move
 
     <script>
@@ -57,31 +57,61 @@
       }
     });
 
-    var player;
-    var map;
+    document.addEventListener('keyup', function(event) {
+      switch (event.keyCode) {
+        case 37: //Left Arrow
+        buttons.left = false;
+        break;
+        case 39: //Right Arrow
+        buttons.right = false;
+        break;
+        case 38: //Up Arrow
+        buttons.up = false;
+        break;
+        case 40: //Down Arrow
+        buttons.down = false;
+        break;
+      }
+    });
+
+    var player,map;
     function init(){
-      player = new Player();
       map = new Map(map1)
       map.load(0,0,true)
+      console.log(map)
+      player = new Player();
+      map.load(player.x,player.y,false)
     }
     init();
 
-    function run()
+    let dt = 0;
+    let lt = 0;
+    let fps = 0;
+    function run(t)
     {
+      requestAnimationFrame(run);
+      dt = (t - lt) / 1000;
+      lt = t
+      fps = Math.round(1/dt);
+
       ctx.clearRect(0,0,canvas.width,canvas.height);
 
-      player.control(buttons);
-      player.update();
       map.load(player.x,player.y,showAll);
+      player.control(buttons);
+      player.draw();
+      player.update();
 
       debug();
-      window.requestAnimationFrame(run);
     }
-    run();
+    requestAnimationFrame(run);
 
     function debug(){
       document.getElementById("debug").innerHTML=`
+      fps: ${fps}
+      <br>
       x: ${player.x}, y: ${player.y}
+      <br>
+      screenX: ${player.screenX}, screenY: ${player.screenY}
       `
     }
     </script>
