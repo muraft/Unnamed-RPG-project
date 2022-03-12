@@ -6,10 +6,12 @@ class Map{
     this.entities=map.entities;
     this.viewW=5;
     this.viewH=5;
-    this.location=[];
+    this.entData=[];
 
     this.tileW = canvas.width/this.viewW;
     this.tileH = canvas.height/this.viewH;
+    this.viewtileW;
+    this.viewtileY;
   }
 
   toIndex(x,y){
@@ -28,18 +30,18 @@ class Map{
     if(px<halfScreenX)px = 0;
     if(py<halfScreenY)py = 0;
 
-    let tileW,tileH,viewW,viewH;
+    let viewW,viewH;
     if(all===true){
       px=0;
       py=0;
-      tileW=canvas.width/this.width;
-      tileH=canvas.height/this.height;
+      this.viewTileW=canvas.width/this.width;
+      this.viewTileH=canvas.height/this.height;
       viewH=this.width;
       viewW=this.height;
     }
     else{
-      tileW=this.tileW;
-      tileH=this.tileH;
+      this.viewTileW=this.tileW;
+      this.viewTileH=this.tileH;
       viewW=this.viewW;
       viewH=this.viewH;
     }
@@ -62,16 +64,17 @@ class Map{
           default:
           ctx.fillStyle = "#7d7d7d";
         }
-        ctx.fillRect(x*tileW,y*tileH,tileW,tileH);
+        ctx.fillRect(x*this.viewTileW,y*this.viewTileH,this.viewTileW,this.viewTileH);
 
-        //Render entities
-        switch(this.entities[this.toIndex(x+px,y+py)]){
-          case 1:
-          this.location[this.entities[this.toIndex(x+px,y+py)]]=[x+px,y+py]
-          ctx.fillStyle = "red";
-          break;
-        }
-        ctx.fillRect(x*tileW+(tileW/4),y*tileH+(tileH/4),tileW/2,tileH/2);
+        //Get entities
+        /*
+        [0] = x position
+        [1] = y position
+        [2] = On screen x position
+        [3] = On screen y position
+        */
+        this.entData[this.entities[this.toIndex(x+px,y+py)]]=[x+px,y+py];
+        this.entData[this.entities[this.toIndex(x+px,y+py)]].push(x*this.viewTileW,y*this.viewTileH);
       }
     }
   }
