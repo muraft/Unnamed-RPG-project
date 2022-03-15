@@ -23,6 +23,22 @@ class Player{
     if(buttons.up)this.direction="up";buttons.up=false;
     if(buttons.down)this.direction="down";buttons.down=false;
   }
+  checkCollision(direction){
+    switch(direction){
+      case "left":
+      return (this.x>0 && map.tileType[map.toIndex(this.x-this.step,this.y)]==0)
+      break;
+      case "up":
+      return (this.y>0 && map.tileType[map.toIndex(this.x,this.y-this.step)]==0)
+      break;
+      case "right":
+      return (this.x<map.width-1 && map.tileType[map.toIndex(this.x+this.step,this.y)]==0)
+      break;
+      case "down":
+      return (this.y<map.height-1 && map.tileType[map.toIndex(this.x,this.y+this.step)]==0)
+      break;
+    }
+  }
   update(){
     if(!this.moveTo){
       this.x=map.entData[this.id][0];
@@ -31,19 +47,19 @@ class Player{
       this.yTemp=map.entData[this.id][1];
       this.stepProgressX=0;
       this.stepProgressY=0;
-      if(this.direction=="left" && this.x>0){
+      if(this.direction=="left" && this.checkCollision("left")){
         this.moveTo="left";
         this.x-=this.step;
       }
-      if(this.direction=="up" && this.y>0){
+      if(this.direction=="up" && this.checkCollision("up")){
         this.moveTo="up";
         this.y-=this.step;
       }
-      if(this.direction=="right" && this.x<map.width-1){
+      if(this.direction=="right" && this.checkCollision("right")){
         this.moveTo="right";
         this.x+=this.step;
       }
-      if(this.direction=="down" && this.y<map.height-1){
+      if(this.direction=="down" && this.checkCollision("down")){
         this.moveTo="down";
         this.y+=this.step;
       }
