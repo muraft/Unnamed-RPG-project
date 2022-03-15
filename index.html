@@ -96,7 +96,7 @@
 
       ctx.clearRect(0,0,canvas.width,canvas.height);
 
-      map.load(player.x,player.y,showAll);
+      map.load(player.x,player.y,showAll,player.stepProgressX,player.stepProgressY);
       player.control(buttons);
       player.draw();
       player.update();
@@ -110,8 +110,6 @@
       fps: ${fps}
       <br>
       x: ${player.x}, y: ${player.y}
-      <br>
-      screenX: ${player.screenX}, screenY: ${player.screenY}
       `
     }
     </script>
