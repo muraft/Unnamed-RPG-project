@@ -2,7 +2,8 @@ class Map{
   constructor(map){
     this.width=map.width;
     this.height=map.height;
-    this.floor=map.floor;
+    this.tiles=map.tiles;
+    this.tileType=map.tileType;
     this.entities=map.entities;
     this.viewW=5;
     this.viewH=5;
@@ -18,7 +19,11 @@ class Map{
     return y*this.width + x;
   }
 
-  load(px,py,all){
+  load(px,py,all,spx,spy){
+    if(spx===null)spx=0;
+    if(spy===null)spy=0;
+
+
     const halfScreenX=Math.floor(this.viewW/2);
     const halfScreenY=Math.floor(this.viewH/2);
 
@@ -50,8 +55,8 @@ class Map{
     {
       for(let x=0;x<viewW;x++)
       {
-        //Render floor
-        switch(this.floor[this.toIndex(x+px,y+py)]){
+        //Render tiles
+        switch(this.tiles[this.toIndex(x+px,y+py)]){
           case 0:
           ctx.fillStyle = "#32a852";
           break;
@@ -65,7 +70,6 @@ class Map{
           ctx.fillStyle = "#7d7d7d";
         }
         ctx.fillRect(x*this.viewTileW,y*this.viewTileH,this.viewTileW,this.viewTileH);
-
         //Get entities
         /*
         [0] = x position
