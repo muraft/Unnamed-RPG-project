@@ -6,32 +6,72 @@
     <title>RPG pre Alpha test</title>
 
     <style type="text/css">
+      body{
+        background-color: gray;
+      }
+      #gamescreen{
+        width: 100%;
+        margin: 0px;
+        background-color: gray;
+      }
+      #debug{
+        color: white;
+      }
       #canvas {
+        width: 100%;
+        max-width: 400px;
+        aspect-ratio: 1/1;
         border: 1px solid black;
+      }
+      #controller button{
+        width: 30%;
+        aspect-ratio: 1;
+        font-size: 10px;
       }
     </style>
 
   </head>
   <body align="center">
-    <div id="debug"></div>
-    <button id="showmap">Show the entire map</button>
+    <font color="white">MOVE WITH KEYBOARD ARROW IF YOU ARE ON PC</font>
     <br>
-    <canvas id="canvas" width="400" height="400">
-    Use arrow keys to move
+    <button id="fullscreen">Fullscreen</button>
+    <div id="gamescreen">
+      <div id="debug"></div>
+      <br>
+      <canvas id="canvas" width="440" height="440"></canvas>
+      <br>
+      <button id="showmap" style="display:none">Show the entire map</button>
+      <div id="controller">
+      <button id="cancel">Cancel</button><button id="up">Up</button><button id="ok">Ok</button>
+      <br>
+      <button id="left">Left</button><button id="o">O</button><button id="right">Right</button>
+      <br>
+      <button id="inventory">Inventory</button><button id="down">Down</button><button id="map">Map</button>
+      </div>
+    </div>
 
     <script>
       const canvas = document.getElementById("canvas");
       const ctx = canvas.getContext("2d");
+      const tileset = new Image();
+      tileset.src = "media/tileset.jpg"
+      tilesetRow = 1;
+      tilesetColumn = 3;
     </script>
     <script src="Classes/Map.js"></script>
-    <script src="map/1.map.js"></script>
     <script src="Classes/Player.js"></script>
+    <script src="map/map1.js"></script>
     <script>
     var showAll=false;
+    document.getElementById("map").addEventListener("click",()=>{
+      if(showAll)showAll=false;
+      else showAll=true;
+    })
     document.getElementById("showmap").addEventListener("click",()=>{
       if(showAll)showAll=false;
       else showAll=true;
     })
+    document.getElementById("fullscreen").addEventListener("click",()=>gamescreen.requestFullscreen())
 
     const buttons={
       left: false,
@@ -39,6 +79,16 @@
       right: false,
       down: false
     }
+
+    document.getElementById("left").addEventListener("touchstart",()=>buttons.left=true);
+    document.getElementById("left").addEventListener("touchend",()=>buttons.left=false);
+    document.getElementById("up").addEventListener("touchstart",()=>buttons.up=true);
+    document.getElementById("up").addEventListener("touchend",()=>buttons.up=false);
+    document.getElementById("right").addEventListener("touchstart",()=>buttons.right=true);
+    document.getElementById("right").addEventListener("touchend",()=>buttons.right=false);
+    document.getElementById("down").addEventListener("touchstart",()=>buttons.down=true);
+    document.getElementById("down").addEventListener("touchend",()=>buttons.down=false);
+
 
     document.addEventListener('keydown', function(event) {
       switch (event.keyCode) {
@@ -55,6 +105,8 @@
         buttons.down = true;
         break;
       }
+      document.getElementById("controller").style.display = "none";
+      document.getElementById("showmap").style.display = "inline-block";
     });
 
     document.addEventListener('keyup', function(event) {
