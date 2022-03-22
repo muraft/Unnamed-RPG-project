@@ -20,3 +20,10 @@ Changelog:
 - Add new variable in the map object: tileType -> to mark the coordinate of collisions in the map
 - Add collision detector
 - Add some preparation to make the viewport transition smoother soon
+
+### Pre-Alpha 4 (Tile sheet and buttons!)
+**22th March 2022**\
+Changelog:
+- Improve tiles renderer to draw tiles image from the tile sheet
+- Add buttons for mobile user
+- Improve map size to 20x20
