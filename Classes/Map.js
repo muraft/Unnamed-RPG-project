@@ -32,8 +32,8 @@ class Map{
 
     if(px+halfScreenX>=this.width-halfScreenX)px = this.width-this.viewW;
     if(py+halfScreenY>=this.height-halfScreenY)py = this.height-this.viewH;
-    if(px<halfScreenX)px = 0;
-    if(py<halfScreenY)py = 0;
+    if(px+halfScreenX<halfScreenX)px = 0;
+    if(py+halfScreenY<halfScreenY)py = 0;
 
     let viewW,viewH;
     if(all===true){
@@ -41,8 +41,8 @@ class Map{
       py=0;
       this.viewTileW=canvas.width/this.width;
       this.viewTileH=canvas.height/this.height;
-      viewH=this.width;
-      viewW=this.height;
+      viewH=this.height;
+      viewW=this.width;
     }
     else{
       this.viewTileW=this.tileW;
@@ -51,25 +51,15 @@ class Map{
       viewH=this.viewH;
     }
 
-    for(let y=0;y<viewH;y++)
+    for(let y=0;y<viewH+1;y++)
     {
-      for(let x=0;x<viewW;x++)
+      for(let x=0;x<viewW+1;x++)
       {
         //Render tiles
-        switch(this.tiles[this.toIndex(x+px,y+py)]){
-          case 0:
-          ctx.fillStyle = "#32a852";
-          break;
-          case 1:
-          ctx.fillStyle = "#8a6c2b";
-          break;
-          case 2:
-          ctx.fillStyle = "#2b5ffc";
-          break;
-          default:
-          ctx.fillStyle = "#7d7d7d";
-        }
-        ctx.fillRect(x*this.viewTileW,y*this.viewTileH,this.viewTileW,this.viewTileH);
+        let tileId=this.tiles[this.toIndex(x+px,y+py)];
+        let row = tileId%tilesetRow;
+        let column = tileId>tilesetColumn-1?tileId-(tilesetColumn*row):tileId;
+        ctx.drawImage(tileset,tileset.width/tilesetColumn*column,tileset.height/tilesetRow*row,1000,1000,x*this.viewTileW,y*this.viewTileH,this.viewTileW,this.viewTileH);
         //Get entities
         /*
         [0] = x position
