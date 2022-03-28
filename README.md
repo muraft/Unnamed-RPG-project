@@ -24,6 +24,12 @@ Changelog:
 ### Pre-Alpha 4 (Tile sheet and buttons!)
 **22th March 2022**\
 Changelog:
-- Improve tiles renderer to draw tiles image from the tile sheet
+- Improve tiles renderer to draw tiles image from the tileset
 - Add buttons for mobile user
 - Improve map size to 20x20
+
+### Pre-Alpha 5 (Character sprite!)
+**28th March 2022**\
+Changelog:
+- Improve buttons design
+- Add character sprite and moving animation

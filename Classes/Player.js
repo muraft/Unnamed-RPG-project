@@ -13,15 +13,30 @@ class Player{
     this.direction=false;
     this.moveTo=false;
 
-    this.color="red";
-    this.width=10;
-    this.height=10;
+    this.idle=0;
+    this.walk=0;
+    this.sprite=new Image();
+    this.sprite.src="media/sprite.png";
   }
   control(buttons){
-    if(buttons.left)this.direction="left";buttons.left=false;
-    if(buttons.right)this.direction="right";buttons.right=false;
-    if(buttons.up)this.direction="up";buttons.up=false;
-    if(buttons.down)this.direction="down";buttons.down=false;
+    if(this.direction==false){
+      if(buttons.left){
+        this.idle=this.direction=0;
+        buttons.left=false;
+      }
+      if(buttons.up){
+        this.idle=this.direction=1;
+        buttons.up=false;
+      }
+      if(buttons.right){
+        this.idle=this.direction=2;
+        buttons.right=false;
+      }
+      if(buttons.down){
+        this.idle=this.direction=3;
+        buttons.down=false;
+      }
+    }
   }
   checkCollision(direction){
     switch(direction){
@@ -39,6 +54,12 @@ class Player{
       break;
     }
   }
+  endMove(){
+    this.moveTo=false;
+    this.walk=0;
+    map.entities[map.toIndex(this.xTemp,this.yTemp)]=0;
+    map.entities[map.toIndex(this.x,this.y)]=1;
+  }
   update(){
     if(!this.moveTo){
       this.x=map.entData[this.id][0];
@@ -47,19 +68,19 @@ class Player{
       this.yTemp=map.entData[this.id][1];
       this.stepProgressX=0;
       this.stepProgressY=0;
-      if(this.direction=="left" && this.checkCollision("left")){
+      if(this.direction===0 && this.checkCollision("left")){
         this.moveTo="left";
         this.x-=this.step;
       }
-      if(this.direction=="up" && this.checkCollision("up")){
+      if(this.direction===1 && this.checkCollision("up")){
         this.moveTo="up";
         this.y-=this.step;
       }
-      if(this.direction=="right" && this.checkCollision("right")){
+      if(this.direction===2 && this.checkCollision("right")){
         this.moveTo="right";
         this.x+=this.step;
       }
-      if(this.direction=="down" && this.checkCollision("down")){
+      if(this.direction===3 && this.checkCollision("down")){
         this.moveTo="down";
         this.y+=this.step;
       }
@@ -73,38 +94,34 @@ class Player{
     {
       if(this.moveTo=="left"){
         this.stepProgressX-=this.speed;
+        this.walk=(this.xTemp+this.stepProgressX<=this.xTemp-this.step/2)?1:2;
         if(this.xTemp+this.stepProgressX<=this.x){
           this.stepProgressX=Math.ceil(this.stepProgressX);
-          this.moveTo=false;
-          map.entities[map.toIndex(this.xTemp,this.yTemp)]=0;
-          map.entities[map.toIndex(this.x,this.y)]=1;
+          this.endMove();
         }
       }
       else if(this.moveTo=="up"){
         this.stepProgressY-=this.speed;
+        this.walk=(this.yTemp+this.stepProgressY<=this.yTemp-this.step/2)?1:2;
         if(this.yTemp+this.stepProgressY<=this.y){
           this.stepProgressY=Math.ceil(this.stepProgressY);
-          this.moveTo=false;
-          map.entities[map.toIndex(this.xTemp,this.yTemp)]=0;
-          map.entities[map.toIndex(this.x,this.y)]=1;
+          this.endMove();
         }
       }
       else if(this.moveTo=="right"){
         this.stepProgressX+=this.speed;
+        this.walk=(this.xTemp+this.stepProgressX<=this.xTemp+this.step/2)?1:2;
         if(this.xTemp+this.stepProgressX>=this.x){
           this.stepProgressX=Math.floor(this.stepProgressX);
-          this.moveTo=false;
-          map.entities[map.toIndex(this.xTemp,this.yTemp)]=0;
-          map.entities[map.toIndex(this.x,this.y)]=1;
+          this.endMove();
         }
       }
       else if(this.moveTo=="down"){
         this.stepProgressY+=this.speed;
+        this.walk=(this.yTemp+this.stepProgressY<=this.yTemp+this.step/2)?1:2;
         if(this.yTemp+this.stepProgressY>=this.y){
           this.stepProgressY=Math.floor(this.stepProgressY);
-          this.moveTo=false;
-          map.entities[map.toIndex(this.xTemp,this.yTemp)]=0;
-          map.entities[map.toIndex(this.x,this.y)]=1;
+          this.endMove();
         }
       }
     }
@@ -115,7 +132,6 @@ class Player{
   }
 
   draw(){
-    ctx.fillStyle=this.color;
-    ctx.fillRect(this.screenX+(map.viewTileW/4)+this.stepProgressX*map.viewTileW,this.screenY+(map.viewTileH/4)+this.stepProgressY*map.viewTileH,map.viewTileW/2,map.viewTileH/2);
+    ctx.drawImage(this.sprite,this.walk*this.sprite.width/3,this.idle*this.sprite.height/4,this.sprite.width/3,this.sprite.height/4,this.screenX+this.stepProgressX*map.viewTileW,this.screenY+this.stepProgressY*map.viewTileH,map.viewTileW,map.viewTileH);
   }
 }

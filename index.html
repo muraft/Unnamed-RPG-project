@@ -6,6 +6,8 @@
     <title>RPG pre Alpha test</title>
 
     <style type="text/css">
+      @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500&display=swap');
+
       body{
         background-color: gray;
       }
@@ -23,10 +25,19 @@
         aspect-ratio: 1/1;
         border: 1px solid black;
       }
-      #controller button{
-        width: 30%;
-        aspect-ratio: 1;
-        font-size: 10px;
+      #controller button, #fullscreen{
+        -webkit-box-shadow: inset 0px 0px 5px 8px rgba(255,255,255,0.17);
+        box-shadow: inset 0px 0px 5px 8px rgba(255,255,255,0.17);
+        width: 80px;
+        height: 80px;
+        font-size: 15px;
+        user-select: none;
+        background-color: brown;
+        font-family: 'Oswald', sans-serif;
+        color: white;
+      }
+      #fullscreen{
+        height: auto;
       }
     </style>
 
@@ -71,7 +82,7 @@
       if(showAll)showAll=false;
       else showAll=true;
     })
-    document.getElementById("fullscreen").addEventListener("click",()=>gamescreen.requestFullscreen())
+    document.getElementById("fullscreen").addEventListener("click",()=>document.getElementById("gamescreen").requestFullscreen())
 
     const buttons={
       left: false,
@@ -79,7 +90,7 @@
       right: false,
       down: false
     }
-
+    document.addEventListener("touchstart",()=>document.getElementById("gamescreen").requestFullscreen())
     document.getElementById("left").addEventListener("touchstart",()=>buttons.left=true);
     document.getElementById("left").addEventListener("touchend",()=>buttons.left=false);
     document.getElementById("up").addEventListener("touchstart",()=>buttons.up=true);
@@ -108,7 +119,6 @@
       document.getElementById("controller").style.display = "none";
       document.getElementById("showmap").style.display = "inline-block";
     });
-
     document.addEventListener('keyup', function(event) {
       switch (event.keyCode) {
         case 37: //Left Arrow
@@ -130,7 +140,6 @@
     function init(){
       map = new Map(map1)
       map.load(0,0,true)
-      console.log(map)
       player = new Player();
       map.load(player.x,player.y,false)
     }
