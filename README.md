@@ -33,3 +33,13 @@ Changelog:
 Changelog:
 - Improve buttons design
 - Add character sprite and moving animation
+
+### Pre-Alpha 6 (Improvements!)
+**1th April 2022**\
+Changelog:
+- Add loading screen, start screen, and pause screen
+- The game is automatically paused when the client device is not on the full screen mode
+- Detect mobile device automatically
+- Smoother move buttons for mobile device
+- Fix player's move sprite
+- Refactoring some code
