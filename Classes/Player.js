@@ -19,22 +19,20 @@ class Player{
     this.sprite.src="media/sprite.png";
   }
   control(buttons){
-    if(this.direction==false){
-      if(buttons.left){
-        this.idle=this.direction=0;
-        buttons.left=false;
-      }
-      if(buttons.up){
-        this.idle=this.direction=1;
-        buttons.up=false;
-      }
-      if(buttons.right){
-        this.idle=this.direction=2;
-        buttons.right=false;
-      }
-      if(buttons.down){
-        this.idle=this.direction=3;
-        buttons.down=false;
+    if(!this.moveTo){
+      if(this.direction==false){
+        if(buttons.left){
+          this.idle=this.direction=0;
+        }
+        if(buttons.up){
+          this.idle=this.direction=1;
+        }
+        if(buttons.right){
+          this.idle=this.direction=2;
+        }
+        if(buttons.down){
+          this.idle=this.direction=3;
+        }
       }
     }
   }
@@ -54,13 +52,14 @@ class Player{
       break;
     }
   }
-  endMove(){
+  sendLocation(){
     this.moveTo=false;
     this.walk=0;
     map.entities[map.toIndex(this.xTemp,this.yTemp)]=0;
     map.entities[map.toIndex(this.x,this.y)]=1;
   }
   update(){
+    //Checking if the player is moving
     if(!this.moveTo){
       this.x=map.entData[this.id][0];
       this.y=map.entData[this.id][1];
@@ -89,45 +88,46 @@ class Player{
     this.screenX=map.entData[this.id][2];
     this.screenY=map.entData[this.id][3];
 
-
+    //Move animation
     if(this.moveTo!==false)
     {
+      let totalX=this.xTemp+this.stepProgressX;
+      let totalY=this.yTemp+this.stepProgressY;
       if(this.moveTo=="left"){
         this.stepProgressX-=this.speed;
-        this.walk=(this.xTemp+this.stepProgressX<=this.xTemp-this.step/2)?1:2;
-        if(this.xTemp+this.stepProgressX<=this.x){
+        this.walk=(totalX<=this.xTemp-this.step/2)?1:2;
+        if(totalX<=this.x){
           this.stepProgressX=Math.ceil(this.stepProgressX);
-          this.endMove();
+          this.sendLocation();
         }
       }
       else if(this.moveTo=="up"){
         this.stepProgressY-=this.speed;
-        this.walk=(this.yTemp+this.stepProgressY<=this.yTemp-this.step/2)?1:2;
-        if(this.yTemp+this.stepProgressY<=this.y){
+        this.walk=(totalY<=this.yTemp-this.step/2)?1:2;
+        if(totalY<=this.y){
           this.stepProgressY=Math.ceil(this.stepProgressY);
-          this.endMove();
+          this.sendLocation();
         }
       }
       else if(this.moveTo=="right"){
         this.stepProgressX+=this.speed;
-        this.walk=(this.xTemp+this.stepProgressX<=this.xTemp+this.step/2)?1:2;
-        if(this.xTemp+this.stepProgressX>=this.x){
+        this.walk=(totalX<=this.xTemp+this.step/2)?1:2;
+        if(totalX>=this.x){
           this.stepProgressX=Math.floor(this.stepProgressX);
-          this.endMove();
+          this.sendLocation();
         }
       }
       else if(this.moveTo=="down"){
         this.stepProgressY+=this.speed;
-        this.walk=(this.yTemp+this.stepProgressY<=this.yTemp+this.step/2)?1:2;
-        if(this.yTemp+this.stepProgressY>=this.y){
+        this.walk=(totalY<=this.yTemp+this.step/2)?1:2;
+        if(totalY>=this.y){
           this.stepProgressY=Math.floor(this.stepProgressY);
-          this.endMove();
+          this.sendLocation();
         }
       }
     }
     else{
-      map.entities[map.toIndex(this.xTemp,this.yTemp)]=0;
-      map.entities[map.toIndex(this.x,this.y)]=1;
+      this.sendLocation();
     }
   }
 

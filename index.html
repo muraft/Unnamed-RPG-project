@@ -7,25 +7,83 @@
 
     <style type="text/css">
       @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
       body{
-        background-color: gray;
+        background-color: #ba7365;
+        font-family: 'VT323', monospace;
       }
+
+      #block{
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: #ba7365;
+        background-image: url('media/background.jpg');
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #loading{
+        font-size: 30px;
+        color: white;
+        width: 100%;
+        height: 100%;
+      }
+      #start{
+        background-color: #ba7365;
+        border: 1px solid #63291e;
+        border-radius: 5px;
+        padding: 5px;
+        display: none;
+        color: white;
+        font-size: 30px;
+        animation-name: splash;
+        animation-duration: 3s;
+      }
+      #pause{
+        background-color: #ba7365;
+        border: 1px solid #63291e;
+        border-radius: 5px;
+        padding: 5px;
+        color: white;
+        font-size: 30px;
+        display: none;
+      }
+
+      @keyframes splash{
+        from {
+          opacity: 0;
+          transform: translate(0,-100%)
+        }
+        to {
+          opacity: 1;
+          transform: translate(0,0)
+        }
+      }
+
       #gamescreen{
         width: 100%;
         margin: 0px;
-        background-color: gray;
+        background-color: #ba7365;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
       }
-      #debug{
-        color: white;
-      }
-      #canvas {
+      #canvas, #controller{
         width: 90%;
         max-width: 400px;
-        aspect-ratio: 1/1;
-        border: 1px solid black;
+        aspect-ratio: 1;
+        border: 2px solid brown;
+        margin: 10px;
       }
-      #controller button, #fullscreen{
+      #controller{
+        border: none;
+        display: none;
+      }
+      button{
         -webkit-box-shadow: inset 0px 0px 5px 8px rgba(255,255,255,0.17);
         box-shadow: inset 0px 0px 5px 8px rgba(255,255,255,0.17);
         width: 80px;
@@ -33,115 +91,102 @@
         font-size: 15px;
         user-select: none;
         background-color: brown;
-        font-family: 'VT323', monospace;
         color: white;
+        border-color: black;
       }
-      #fullscreen{
+      button:active{
+        background-color: #d1aaa7;
+      }
+      #controller button{
+        width: 33%;
+        height: 33%;
+      }
+      #fullscreen,#start button,#pause button{
+        width: auto;
         height: auto;
+        padding: 5px;
       }
     </style>
 
   </head>
   <body align="center">
-    <font color="white">MOVE WITH KEYBOARD ARROW IF YOU ARE ON PC</font>
-    <br>
-    <button id="fullscreen">Fullscreen</button>
+    <div id="block">
+      <div id="loading">Loading Game...</div>
+      <div id="start">
+        Welcome to Unnamed RPG game!
+        <br>
+        <button>Start game</button>
+      </div>
+      <div id="pause">
+        Game paused
+        <br>
+        <button>Continue</button>
+      </div>
+    </div>
+
+    <script>
+      window.onload=()=>{
+        document.getElementById("loading").style.display="none";
+        document.getElementById("start").style.display="block";
+
+        document.querySelector("#start button").onclick=()=>{
+          document.getElementById("block").style.display="none";
+          document.getElementById("start").style.display="none";
+          document.getElementById("gamescreen").requestFullscreen();
+          requestAnimationFrame(run);
+        }
+        let pause = false;
+        document.querySelector("#pause button").onclick=()=>{
+          pause = false;
+          document.getElementById("block").style.display="none";
+          document.getElementById("gamescreen").requestFullscreen();
+        }
+      }
+    </script>
     <div id="gamescreen">
-      <div id="debug"></div>
-      <br>
+      <font color="white">MOVE WITH KEYBOARD ARROW IF YOU ARE ON PC</font>
       <canvas id="canvas" width="440" height="440"></canvas>
       <br>
-      <button id="showmap" style="display:none">Show the entire map</button>
+      <button id="showmap">Show the entire map</button>
+      <br>
       <div id="controller">
-      <button id="cancel">Cancel</button><button id="up">Up</button><button id="ok">Ok</button>
+      <button id="cancel">Cancel</button><button id="up">&uarr;</button><button id="ok">Ok</button>
       <br>
-      <button id="left">Left</button><button id="o">O</button><button id="right">Right</button>
+      <button id="left">&larr;</button><button id="o">&#9676;</button><button id="right">&rarr;</button>
       <br>
-      <button id="inventory">Inventory</button><button id="down">Down</button><button id="map">Map</button>
+      <button id="inventory">Inventory</button><button id="down">&darr;</button><button id="map">Map</button>
       </div>
     </div>
 
     <script>
       const canvas = document.getElementById("canvas");
       const ctx = canvas.getContext("2d");
+
       const tileset = new Image();
       tileset.src = "media/tileset.jpg"
-      tilesetRow = 1;
-      tilesetColumn = 3;
+      const tilesetRow = 1;
+      const tilesetColumn = 3;
+
+      var showMap=false;
+      const buttons={
+        left: false,
+        up: false,
+        right: false,
+        down: false
+      }
     </script>
+    <script src="inputHandler.js"></script>
     <script src="Classes/Map.js"></script>
     <script src="Classes/Player.js"></script>
     <script src="map/map1.js"></script>
     <script>
-    var showAll=false;
-    document.getElementById("map").addEventListener("click",()=>{
-      if(showAll)showAll=false;
-      else showAll=true;
-    })
-    document.getElementById("showmap").addEventListener("click",()=>{
-      if(showAll)showAll=false;
-      else showAll=true;
-    })
-    document.getElementById("fullscreen").addEventListener("click",()=>document.getElementById("gamescreen").requestFullscreen())
 
-    const buttons={
-      left: false,
-      up: false,
-      right: false,
-      down: false
-    }
-    document.addEventListener("touchstart",()=>document.getElementById("gamescreen").requestFullscreen())
-    document.getElementById("left").addEventListener("touchstart",()=>buttons.left=true);
-    document.getElementById("left").addEventListener("touchend",()=>buttons.left=false);
-    document.getElementById("up").addEventListener("touchstart",()=>buttons.up=true);
-    document.getElementById("up").addEventListener("touchend",()=>buttons.up=false);
-    document.getElementById("right").addEventListener("touchstart",()=>buttons.right=true);
-    document.getElementById("right").addEventListener("touchend",()=>buttons.right=false);
-    document.getElementById("down").addEventListener("touchstart",()=>buttons.down=true);
-    document.getElementById("down").addEventListener("touchend",()=>buttons.down=false);
-
-
-    document.addEventListener('keydown', function(event) {
-      switch (event.keyCode) {
-        case 37: //Left Arrow
-        buttons.left = true;
-        break;
-        case 39: //Right Arrow
-        buttons.right = true;
-        break;
-        case 38: //Up Arrow
-        buttons.up = true;
-        break;
-        case 40: //Down Arrow
-        buttons.down = true;
-        break;
-      }
-      document.getElementById("controller").style.display = "none";
-      document.getElementById("showmap").style.display = "inline-block";
-    });
-    document.addEventListener('keyup', function(event) {
-      switch (event.keyCode) {
-        case 37: //Left Arrow
-        buttons.left = false;
-        break;
-        case 39: //Right Arrow
-        buttons.right = false;
-        break;
-        case 38: //Up Arrow
-        buttons.up = false;
-        break;
-        case 40: //Down Arrow
-        buttons.down = false;
-        break;
-      }
-    });
 
     var player,map;
     function init(){
       map = new Map(map1)
       map.load(0,0,true)
       player = new Player();
-      map.load(player.x,player.y,false)
     }
     init();
 
@@ -151,27 +196,27 @@
     function run(t)
     {
       requestAnimationFrame(run);
-      dt = (t - lt) / 1000;
-      lt = t
-      fps = Math.round(1/dt);
+      if(pause){
+        dt = (t - lt) / 1000;
+        lt = t
+        fps = Math.round(1/dt);
 
-      ctx.clearRect(0,0,canvas.width,canvas.height);
+        if(Document.fullscreenElement==null){
+          document.getElementById("block").style.display="flex";
+          document.getElementById("pause").style.display="block";
+          pause=true;
+        }
 
-      map.load(player.x,player.y,showAll,player.stepProgressX,player.stepProgressY);
-      player.control(buttons);
-      player.draw();
-      player.update();
+        ctx.clearRect(0,0,canvas.width,canvas.height);
 
-      debug();
-    }
-    requestAnimationFrame(run);
+        map.load(player.x,player.y,showMap,player.stepProgressX,player.stepProgressY);
+        player.control(buttons);
+        player.update();
+        player.draw();
 
-    function debug(){
-      document.getElementById("debug").innerHTML=`
-      fps: ${fps}
-      <br>
-      x: ${player.x}, y: ${player.y}
-      `
+        ctx.font = "30px VT323";
+        ctx.fillText(fps+" FPS", 0, 20);
+      }
     }
     </script>
 
